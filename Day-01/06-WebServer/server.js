@@ -1,4 +1,6 @@
 var http = require('http');
+var fs = require('fs');
+var path = require('path');
 /*
 req.url -> resource requested
 fs.existsSync -> if a file exists or not
@@ -10,26 +12,23 @@ if (file not exists){
 }
 }
 */
-function getFileContents(callback){
-	var fs = require('fs');
-	fs.readFile('./index.html', {encoding : 'utf8'}, function(err, fileContents){
-		if (err){
-			console.log('something went wrong - ', err);
-			process.exit(1);
-		}
-		callback(fileContents);
-	});
-}
-function getResponseWriter(req, res){
-	return function writeResponse(fileContents){
-		res.write(fileContents);
-		res.end();
-	}	
-}
+
 
 var server = http.createServer(function(req, res){
-	console.log('req for - > ', req.url);
-	getFileContents(getResponseWriter(req, res));
+	var resourceRequested = req.url;
+	var resourcePath = path.join(__dirname, resourceRequested);
+	if (!fs.existsSync(resourcePath)){
+		res.statusCode = 404;
+		res.end();
+		return;
+	}
+	var stream = fs.createReadStream(resourcePath);
+	stream.on('data', function(chunk){
+		res.write(chunk);
+	});
+	stream.on('end', function(){
+		res.end();
+	});
 });
 server.listen(8080);
 console.log('server listening on port 8080..!!');
