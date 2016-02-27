@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Chat App</title>
+	<script type="text/javascript">
+		(function(){
+			window.addEventListener("DOMContentLoaded", init);
+			var socketConnection = null,
+				divMessages = null,
+				txtMessage = null;
+
+			function init(){
+				var btnSend = document.getElementById("btnSend");
+				btnSend.addEventListener("click", onBtnSendClick);
+
+				divMessages = document.getElementById("divMessages");
+				txtMessage = document.getElementById("txtMessage");
+				socketConnection = new WebSocket("ws://localhost:9090");
+				socketConnection.addEventListener('message', onServerMessage);
+
+			}
+			function onBtnSendClick(){
+				var msg = txtMessage.value;
+				socketConnection.send(msg);
+			}
+			function onServerMessage(evtArg){
+				var msg = evtArg.data;
+				divMessages.innerHTML += msg + "<br/>";
+			}
+		})();
+	</script>
+</head>
+<body>
+	<input type="text" name="" id="txtMessage">
+	<input type="button" value="Send" id="btnSend">
+	<div id="divMessages"></div>
+</body>
+</html>
