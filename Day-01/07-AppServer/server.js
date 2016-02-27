@@ -74,3 +74,12 @@ var server = http.createServer(function(req, res){
 });
 server.listen(8080);
 console.log('server listening on port 8080..!!');
+
+/*
+refactor the above into 4 different components
+1. Data Parser, 30, 56 - 61
+2. Static Resource Handler, 25-28, 33-47
+3. Calculator Request Handler, 47-68
+4. Not Found Handler - 71-72
+
+*/
